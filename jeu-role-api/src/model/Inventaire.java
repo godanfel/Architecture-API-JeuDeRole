@@ -61,5 +61,5 @@ public class Inventaire
             //return true;
         //}
       //  return false;
-    }
+    //}
 }
