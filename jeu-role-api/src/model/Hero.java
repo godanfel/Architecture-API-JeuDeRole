@@ -10,6 +10,9 @@ public class Hero {
     private Species species;
     private HeroClass heroClass;
     private Map<HeroCaracteristic, AbilityScore> characteristics;
+    private final int MAX_ABILITY_VALUE = 18;
+    private final int MIN_ABILITY_VALUE = 3;
+
     private ArmourCategory equippedArmour;
     private WeaponCategory equippedWeapon;
 
@@ -20,11 +23,9 @@ public class Hero {
     private int level;
     private int xp;
 
-    private int currentHP;
-    private int maxHP;
+    private Health hp;
+    private MagicPoints magicPoints;
 
-    private int currentMagicPoints;
-    private int maxMagicPoints;
 
     private Inventory inventory;
 
@@ -36,6 +37,9 @@ public class Hero {
         this.characteristics = new HashMap<>();
         for (HeroCaracteristic caracteristic : HeroCaracteristic.values()){
             int raw = rawCharacteristics.get(caracteristic);
+            if (raw > MAX_ABILITY_VALUE || raw < MIN_ABILITY_VALUE){
+                throw new AbilityScoreInvalidException ("An ability Score outside is beyond accepted parameters");
+            }
             int bonus = species.getCharacteristicsBonuses().getOrDefault(caracteristic, 0);
             this.characteristics.put(caracteristic, new AbilityScore(raw + bonus));
         }
@@ -45,11 +49,9 @@ public class Hero {
 
         //ceci assure que le MaxHp deviens pas 0, en fait, Math.max prends le maximum des deux valeurs, si jamais le hero finis par avoir un HP de -1
         //(on sait jamais) on peut le corriger ici. En deuxieme on sait que si le MaxHp est >1 il serait choisi comme valeur finale
-        this.maxHP = Math.max(1, heroClass.getBaseHp() + (characteristics.get(HeroCaracteristic.CONSTITUTION)).getModifier());
-        this.maxMagicPoints = heroClass.getBaseMagic();
+        this.hp = Health.startingAt((Math.max(1, heroClass.getBaseHp() + (characteristics.get(HeroCaracteristic.CONSTITUTION)).getModifier()))); //;
+        this.magicPoints = MagicPoints.startingAt(heroClass.getBaseMagic());
 
-        this.currentMagicPoints = maxMagicPoints;
-        this.currentHP = maxHP;
 
         this.equippedArmour = heroClass.startingArmour();
         this.equippedWeapon = heroClass.startingWeapon();
@@ -88,19 +90,19 @@ public class Hero {
     }
 
     public int getCurrentHP() {
-        return currentHP;
+        return hp.getCurrentHp();
     }
 
     public int getMaxHP() {
-        return maxHP;
+        return hp.getMaximumHp();
     }
 
     public int getCurrentMagicPoints() {
-        return currentMagicPoints;
+        return magicPoints.getCurrentMagicPoints();
     }
 
     public int getMaxMagicPoints() {
-        return maxMagicPoints;
+        return magicPoints.getMaximumMagicPoints();
     }
 
     public ArmourCategory getEquippedArmour() {
@@ -146,7 +148,7 @@ public class Hero {
     }
 
     public void heal(int amount){
-        this.currentHP = Math.min(currentHP + amount, maxHP);
+        hp.heal(amount);
     }
 
 }

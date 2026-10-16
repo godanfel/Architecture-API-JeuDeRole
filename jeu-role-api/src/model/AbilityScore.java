@@ -1,6 +1,8 @@
 package model;
 
+
 public record AbilityScore(int score){
+
     public int getModifier(){
         return Math.floorDiv((score-10), 2);
     }

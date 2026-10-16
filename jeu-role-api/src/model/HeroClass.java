@@ -2,7 +2,7 @@ package model;
 
 import java.util.Set;
 
-interface HeroClass {
+public interface HeroClass {
     String getName();
 
     int getBaseHp();
