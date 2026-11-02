@@ -20,8 +20,8 @@ public class Hero {
     private Set<WeaponCategory> allowedWeaponCategories;
 
 
-    private int level;
-    private int xp;
+    private Level level;
+    private Experience xp;
 
     private Health hp;
     private MagicPoints magicPoints;
@@ -44,8 +44,8 @@ public class Hero {
             this.characteristics.put(caracteristic, new AbilityScore(raw + bonus));
         }
 
-        this.level = 1;
-        this.xp = 0;
+        this.level = Level.initial();
+        this.xp = Experience.initial();
 
         //ceci assure que le MaxHp deviens pas 0, en fait, Math.max prends le maximum des deux valeurs, si jamais le hero finis par avoir un HP de -1
         //(on sait jamais) on peut le corriger ici. En deuxieme on sait que si le MaxHp est >1 il serait choisi comme valeur finale
@@ -81,11 +81,11 @@ public class Hero {
         return Collections.unmodifiableMap(characteristics);
     }
 
-    public int getLevel() {
+    public Level getLevel() {
         return level;
     }
 
-    public int getXp() {
+    public Experience getXp() {
         return xp;
     }
 
